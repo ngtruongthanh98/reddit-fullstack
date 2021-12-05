@@ -1,10 +1,13 @@
-#SERVER:
-##go to server folder
+# SERVER:
 
-##Watching for changes...
+## go to server folder
+
+## Watching for changes...
+
 `yarn watch`
 
-##Start server:
+## Start server:
+
 `yarn server`
 
-#CLIENT:
+# CLIENT:
