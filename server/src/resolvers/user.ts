@@ -13,7 +13,8 @@ export class UserResolver {
   //* Register mutation
   @Mutation((_returns) => UserMutationResponse, { nullable: true })
   async register(
-    @Arg('registerInput') registerInput: RegisterInput
+    @Arg('registerInput') registerInput: RegisterInput,
+    @Ctx() { req }: Context
   ): Promise<UserMutationResponse> {
     const validateRegisterInputErrors = validateRegisterInput(registerInput);
 
@@ -44,17 +45,21 @@ export class UserResolver {
 
       const hashedPassword = await argon2.hash(password);
 
-      const newUser = User.create({
+      let newUser = User.create({
         email,
         username,
         password: hashedPassword,
       });
 
+      newUser = await User.save(newUser);
+
+      req.session.userId = newUser.id;
+
       return {
         code: 200,
         success: true,
         message: 'User created successfully',
-        user: await User.save(newUser),
+        user: newUser,
       };
     } catch (error) {
       console.error(error);
