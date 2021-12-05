@@ -17,7 +17,7 @@ import { COOKIE_NAME, __prod__ } from './constants';
 const main = async () => {
   await createConnection({
     type: 'postgres',
-    database: 'drazen',
+    database: process.env.DB_NAME_DEV,
     username: process.env.DB_USERNAME_DEV,
     password: process.env.DB_PASSWORD_DEV,
     logging: true,
