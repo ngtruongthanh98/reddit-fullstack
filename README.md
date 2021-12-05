@@ -10,4 +10,6 @@
 
 `yarn server`
 
+### Run GraphQL server at http://localhost:4000/graphql
+
 # CLIENT:
