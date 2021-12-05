@@ -4,6 +4,10 @@
 
 `cd server`
 
+## Install dependencies
+
+`yarn` or `yarn install`
+
 ## Watching for changes...
 
 `yarn watch`
