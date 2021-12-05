@@ -4,9 +4,11 @@ import argon2 from 'argon2';
 import { UserMutationResponse } from '../types/UserMutationResponse';
 import { RegisterInput } from '../types/RegisterInput';
 import { validateRegisterInput } from '../utils/validateRegisterInput';
+import { LoginInput } from '../types/LoginInput';
 
 @Resolver()
 export class UserResolver {
+  //* Register mutation
   @Mutation((_returns) => UserMutationResponse, { nullable: true })
   async register(
     @Arg('registerInput') registerInput: RegisterInput
@@ -54,6 +56,68 @@ export class UserResolver {
       };
     } catch (error) {
       console.error(error);
+      return {
+        code: 500,
+        success: false,
+        message: `Internal server error: ${error.message}`,
+      };
+    }
+  }
+
+  //* Login mutation
+  @Mutation((_returns) => UserMutationResponse)
+  async login(
+    @Arg('loginInput') loginInput: LoginInput
+  ): Promise<UserMutationResponse> {
+    try {
+      const { usernameOrEmail, password } = loginInput;
+      const existingUser = await User.findOne(
+        usernameOrEmail.includes('@')
+          ? { email: usernameOrEmail }
+          : { username: usernameOrEmail }
+      );
+
+      if (!existingUser) {
+        return {
+          code: 400,
+          success: false,
+          message: 'User not found',
+          errors: [
+            {
+              field: 'usernameOrEmail',
+              message: 'User not found',
+            },
+          ],
+        };
+      }
+
+      const isValidPassword = await argon2.verify(
+        existingUser.password,
+        password
+      );
+
+      if (!isValidPassword) {
+        return {
+          code: 400,
+          success: false,
+          message: 'Invalid password',
+          errors: [
+            {
+              field: 'password',
+              message: 'Invalid password',
+            },
+          ],
+        };
+      }
+
+      return {
+        code: 200,
+        success: true,
+        message: 'User logged in successfully',
+        user: existingUser,
+      };
+    } catch (error) {
+      console.log(error.message);
       return {
         code: 500,
         success: false,
