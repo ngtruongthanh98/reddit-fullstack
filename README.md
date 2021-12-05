@@ -2,6 +2,8 @@
 
 ## go to server folder
 
+`cd server`
+
 ## Watching for changes...
 
 `yarn watch`
