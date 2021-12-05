@@ -9,6 +9,10 @@ import { buildSchema } from 'type-graphql';
 import { HelloResolver } from './resolvers/hello';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import { UserResolver } from './resolvers/user';
+import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
+import session from 'express-session';
+import { COOKIE_NAME, __prod__ } from './constants';
 
 const main = async () => {
   await createConnection({
@@ -22,6 +26,28 @@ const main = async () => {
   });
 
   const app = express();
+
+  //* Session / Cookies Store
+  const mongoUrl = `mongodb+srv://${process.env.SESSION_DB_USERNAME_DEV_PROD}:${process.env.SESSION_DB_PASSWORD_DEV_PROD}@reddit.4oheo.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+  await mongoose.connect(mongoUrl);
+
+  console.log('MongoDB Connected');
+
+  app.use(
+    session({
+      name: COOKIE_NAME,
+      store: MongoStore.create({ mongoUrl }),
+      cookie: {
+        maxAge: 1000 * 60 * 60, // one hour
+        httpOnly: true,
+        secure: __prod__, // only send cookie over https
+        sameSite: 'lax', // protect against CSRF]
+      },
+      secret: process.env.SESSION_SECRET_DEV_PROD as string,
+      saveUninitialized: false, // dont save empty session, right from the start
+      resave: false, // dont save session if unmodified
+    })
+  );
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
