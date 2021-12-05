@@ -13,6 +13,7 @@ import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import { COOKIE_NAME, __prod__ } from './constants';
+import { Context } from './types/Context';
 
 const main = async () => {
   await createConnection({
@@ -54,7 +55,7 @@ const main = async () => {
       resolvers: [HelloResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res }),
+    context: ({ req, res }): Context => ({ req, res }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
 
