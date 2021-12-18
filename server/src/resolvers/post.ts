@@ -1,6 +1,6 @@
 import { CreatePostInput } from '../types/CreatePostInput';
 import { PostMutationResponse } from '../types/PostMutationResponse';
-import { Arg, Mutation, Resolver } from 'type-graphql';
+import { Arg, Mutation, Resolver, Query } from 'type-graphql';
 import { Post } from '../entities/Post';
 
 @Resolver()
@@ -31,5 +31,10 @@ export class PostResolver {
         message: `Internal server error ${error.message}`,
       };
     }
+  }
+
+  @Query((_return) => [Post])
+  async posts(): Promise<Post[]> {
+    return Post.find();
   }
 }
