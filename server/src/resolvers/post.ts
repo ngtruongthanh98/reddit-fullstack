@@ -34,9 +34,14 @@ export class PostResolver {
     }
   }
 
-  @Query((_return) => [Post])
-  async posts(): Promise<Post[]> {
-    return Post.find();
+  @Query((_return) => [Post], { nullable: true })
+  async posts(): Promise<Post[] | null> {
+    try {
+      return await Post.find();
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 
   @Query((_return) => Post, { nullable: true })
