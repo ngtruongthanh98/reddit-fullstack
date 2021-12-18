@@ -41,9 +41,9 @@ const main = async () => {
       store: MongoStore.create({ mongoUrl }),
       cookie: {
         maxAge: 1000 * 60 * 60, // one hour
-        httpOnly: true,
+        httpOnly: true, // JS frontend cannot access cookies
         secure: __prod__, // only send cookie over https
-        sameSite: 'lax', // protect against CSRF]
+        sameSite: 'lax', // protect against CSRF
       },
       secret: process.env.SESSION_SECRET_DEV_PROD as string,
       saveUninitialized: false, // dont save empty session, right from the start
