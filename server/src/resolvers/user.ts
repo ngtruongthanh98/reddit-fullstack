@@ -45,13 +45,13 @@ export class UserResolver {
 
       const hashedPassword = await argon2.hash(password);
 
-      let newUser = User.create({
+      const newUser = User.create({
         email,
         username,
         password: hashedPassword,
       });
 
-      newUser = await User.save(newUser);
+      await User.save(newUser);
 
       req.session.userId = newUser.id;
 
