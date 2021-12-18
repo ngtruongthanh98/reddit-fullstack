@@ -2,6 +2,7 @@ import { CreatePostInput } from '../types/CreatePostInput';
 import { PostMutationResponse } from '../types/PostMutationResponse';
 import { Arg, Mutation, Resolver, Query, ID } from 'type-graphql';
 import { Post } from '../entities/Post';
+import { UpdatePostInput } from '../types/UpdatePostInput';
 
 @Resolver()
 export class PostResolver {
@@ -42,5 +43,41 @@ export class PostResolver {
   async post(@Arg('id', (_type) => ID) id: number): Promise<Post | undefined> {
     const post = Post.findOne(id);
     return post;
+  }
+
+  @Mutation((_return) => PostMutationResponse)
+  async updatePost(
+    @Arg('updatePostInput') { id, title, text }: UpdatePostInput
+  ): Promise<PostMutationResponse> {
+    try {
+      const existingPost = await Post.findOne(id);
+
+      if (!existingPost) {
+        return {
+          code: 404,
+          success: false,
+          message: 'Post not found',
+        };
+      }
+
+      existingPost.title = title;
+      existingPost.text = text;
+
+      await Post.save(existingPost);
+
+      return {
+        code: 200,
+        success: true,
+        message: 'Post updated successfully',
+        post: existingPost,
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        code: 500,
+        success: false,
+        message: `Internal server error ${error.message}`,
+      };
+    }
   }
 }
