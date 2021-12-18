@@ -89,4 +89,36 @@ export class PostResolver {
       };
     }
   }
+
+  @Mutation((_return) => PostMutationResponse)
+  async deletePost(
+    @Arg('id', (_type) => ID) id: number
+  ): Promise<PostMutationResponse> {
+    try {
+      const existingPost = await Post.findOne(id);
+
+      if (!existingPost) {
+        return {
+          code: 404,
+          success: false,
+          message: 'Post not found',
+        };
+      }
+
+      await Post.remove(existingPost);
+
+      return {
+        code: 200,
+        success: true,
+        message: 'Post deleted successfully',
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        code: 500,
+        success: false,
+        message: `Internal server error ${error.message}`,
+      };
+    }
+  }
 }
