@@ -46,8 +46,12 @@ export class PostResolver {
 
   @Query((_return) => Post, { nullable: true })
   async post(@Arg('id', (_type) => ID) id: number): Promise<Post | undefined> {
-    const post = Post.findOne(id);
-    return post;
+    try {
+      const post = Post.findOne(id);
+      return post;
+    } catch (error) {
+      return undefined;
+    }
   }
 
   @Mutation((_return) => PostMutationResponse)
