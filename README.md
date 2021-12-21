@@ -19,3 +19,11 @@
 ### Run GraphQL server at http://localhost:4000/graphql
 
 # CLIENT:
+
+## go to client folder
+
+`cd client`
+
+## Run client:
+
+`yarn dev`
