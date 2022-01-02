@@ -27,3 +27,7 @@
 ## Run client:
 
 `yarn dev`
+
+## Run codegen at http://localhost:4000/graphql
+
+`yarn codegen`
